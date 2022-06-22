@@ -172,7 +172,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6" data-path="05-api-tour.html">
+        <li class="chapter " data-level="1.6" data-path="05-try-various-datas.html">
+            
+                <a href="05-try-various-datas.html">
+            
+                    
+                    いろいろなデータにつないでみよう
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="05-api-tour.html">
             
                 <a href="05-api-tour.html">
             
@@ -185,7 +198,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.7" data-path="06-api-tips.html">
+        <li class="chapter " data-level="1.8" data-path="06-api-tips.html">
             
                 <a href="06-api-tips.html">
             
@@ -198,7 +211,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.8" data-path="07-extra-discussion.html">
+        <li class="chapter " data-level="1.9" data-path="07-extra-discussion.html">
             
                 <a href="07-extra-discussion.html">
             
@@ -257,6 +270,10 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="柴犬画像-api-につなぐ"><a name="柴犬画像-api-につなぐ" class="plugin-anchor" href="#柴犬画像-api-につなぐ"><i class="fa fa-link" aria-hidden="true"></i></a>柴犬画像 API につなぐ</h1>
+<h2 id="この章ですすめること"><a name="この章ですすめること" class="plugin-anchor" href="#この章ですすめること"><i class="fa fa-link" aria-hidden="true"></i></a>この章ですすめること</h2>
+<p><img src="https://i.gyazo.com/728ab1bc727950222d256e5db6e4d080.png" alt="image"></p>
+<p>柴犬画像 API につないで、取得した画像 URL をブラウザのアドレスバーにペーストして、アクセスして画像取得を確認します。</p>
+<p><img src="https://i.gyazo.com/7ec52a53d8ae79b3906d6fa26d8e991e.jpg" alt="image"></p>
 <h2 id="開発環境"><a name="開発環境" class="plugin-anchor" href="#開発環境"><i class="fa fa-link" aria-hidden="true"></i></a>開発環境</h2>
 <ul>
 <li>Unity は 2019.4 台</li>
@@ -402,7 +419,64 @@
 <p><img src="https://i.gyazo.com/7ec52a53d8ae79b3906d6fa26d8e991e.jpg" alt="image"></p>
 <p>このように、画像が取得できます</p>
 <h2 id="shibainuapiloader-プログラムの解説"><a name="shibainuapiloader-プログラムの解説" class="plugin-anchor" href="#shibainuapiloader-プログラムの解説"><i class="fa fa-link" aria-hidden="true"></i></a>ShibainuAPILoader プログラムの解説</h2>
-<p>TODO : ShibainuAPILoader プログラムの解説</p>
+<pre><code class="lang-csharp"><span class="hljs-comment">// JSON データ化するクラス</span>
+[<span class="hljs-meta">Serializable</span>]
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ShibaData</span>
+{
+    <span class="hljs-keyword">public</span> List&lt;<span class="hljs-built_in">string</span>&gt; urls;
+}
+</code></pre>
+<p>まず、受け取った JSON データ化するクラスです。 C# で使いやすい構造データに変換するテンプレートの役目です。</p>
+<p>これは、受け取るデータ合わせて書き換えるので、いろいろな API を取得するたびに調整する部分です。</p>
+<pre><code class="lang-csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Start</span>(<span class="hljs-params"></span>)</span>
+{
+    StartCoroutine(GetShibainu());
+}
+</code></pre>
+<p>まず、起動時に柴犬画像 API に取得に向かいます。</p>
+<pre><code class="lang-csharp">    <span class="hljs-function">IEnumerator <span class="hljs-title">GetShibainu</span>(<span class="hljs-params"></span>)</span>
+    {
+        <span class="hljs-comment">// 3 つの柴犬画像を取得するURL</span>
+        UnityWebRequest request = UnityWebRequest.Get(<span class="hljs-string">&quot;http://shibe.online/api/shibes?count=3&amp;urls=true&amp;httpsUrls=true&quot;</span>);
+
+        <span class="hljs-keyword">yield</span> <span class="hljs-keyword">return</span> request.SendWebRequest();
+</code></pre>
+<p>まず、<code>UnityWebRequest</code> クラスで GET リクエストする API の URL　を設定して、実行します。</p>
+<pre><code class="lang-csharp">        <span class="hljs-keyword">if</span> (request.isNetworkError || request.isHttpError)
+        {
+            Debug.Log(request.error);
+        }
+        <span class="hljs-keyword">else</span>
+        {
+            <span class="hljs-comment">// 結果をテキストとして表示します</span>
+            Debug.Log(request.downloadHandler.text);
+
+            <span class="hljs-comment">// まずテキストデータとして取得</span>
+            <span class="hljs-built_in">string</span> json = (<span class="hljs-built_in">string</span>)request.downloadHandler.text;
+
+            Debug.LogFormat(<span class="hljs-string">&quot;json: {0}&quot;</span>, json);
+</code></pre>
+<p><code>if (request.isNetworkError || request.isHttpError)</code> で HTTP まわりの取得エラーを検知してます。問題なければ else で取得成功という流れです。</p>
+<p>結果を待ってテキストデータとして取得します。</p>
+<pre><code class="lang-csharp">            <span class="hljs-comment">// ルートが配列なので JSON 化する前に urls オブジェクトで包んで調整する</span>
+            json = <span class="hljs-string">&quot;{\&quot;urls\&quot;:&quot;</span> + json + <span class="hljs-string">&quot;}&quot;</span>;
+</code></pre>
+<p>ここがちょっとややこしいんのですが、柴犬 API で返す値のルートが配列なので ArgumentException: JSON must represent an object type. というエラーが出てしまい困りました。FromJson の制約の一つとのことです。</p>
+<p>ルートが配列なので JSON 化する前に urls オブジェクトで包んで調整しています。</p>
+<pre><code class="lang-csharp">            <span class="hljs-comment">// そのうえで ShibaData クラスで JSON データ化</span>
+            ShibaData shibaData = JsonUtility.FromJson&lt;ShibaData&gt;(json);
+</code></pre>
+<p>包んでしまえば、事前に決めた <code>ShibaData</code> をもとに <code>JsonUtility.FromJson</code> で C# で使いやすい構造データ化します。</p>
+<pre><code class="lang-csharp">            <span class="hljs-comment">// 3 つの柴犬画像 URL をリストアップ</span>
+            Debug.LogFormat(<span class="hljs-string">&quot;1: {0}&quot;</span>, shibaData.urls[<span class="hljs-number">0</span>]);
+            Debug.LogFormat(<span class="hljs-string">&quot;2: {0}&quot;</span>, shibaData.urls[<span class="hljs-number">1</span>]);
+            Debug.LogFormat(<span class="hljs-string">&quot;3: {0}&quot;</span>, shibaData.urls[<span class="hljs-number">2</span>]);
+        }
+
+
+    }
+</code></pre>
+<p>あとは、<code>shibaData.urls</code> は List 型になるので3つ取得したデータを一つ一つ表示しています。</p>
 <h2 id="質疑応答"><a name="質疑応答" class="plugin-anchor" href="#質疑応答"><i class="fa fa-link" aria-hidden="true"></i></a>質疑応答</h2>
 <p><img src="https://i.gyazo.com/aba8ccd625e7320883851b71ebd0caf2.png" alt="image"></p>
 <p>ここまでで質問があればどうぞ！</p>
@@ -451,7 +525,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"柴犬画像 API につなぐ","level":"1.4","depth":1,"next":{"title":"API から柴犬画像を表示","level":"1.5","depth":1,"path":"04-shibainu-image-tile.md","ref":"04-shibainu-image-tile.md","articles":[]},"previous":{"title":"API で大切な HTTP","level":"1.3","depth":1,"path":"02-api-and-http.md","ref":"02-api-and-http.md","articles":[]},"dir":"ltr"},"config":{"plugins":["anchors","hide-published-with","copy-code-button","intopic-toc","back-to-top-button"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"intopic-toc":{"selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4, .markdown-section h5, .markdown-section h6","mode":"nested","maxDepth":6,"isCollapsed":true,"isScrollspyActive":true,"visible":true,"label":"In this article"},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"hide-published-with":{},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"back-to-top-button":{},"copy-code-button":{},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"バンタンゲームアカデミー 田中正吾 特別授業 【2年生向け】","language":"ja","gitbook":"*","description":"詳細説明"},"file":{"path":"03-getting-shibainu-api.md","mtime":"2022-06-22T07:39:54.159Z","type":"markdown"},"gitbook":{"version":"3.7.3","time":"2022-06-22T09:40:05.543Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"柴犬画像 API につなぐ","level":"1.4","depth":1,"next":{"title":"API から柴犬画像を表示","level":"1.5","depth":1,"path":"04-shibainu-image-tile.md","ref":"04-shibainu-image-tile.md","articles":[]},"previous":{"title":"API で大切な HTTP","level":"1.3","depth":1,"path":"02-api-and-http.md","ref":"02-api-and-http.md","articles":[]},"dir":"ltr"},"config":{"plugins":["anchors","hide-published-with","copy-code-button","intopic-toc","back-to-top-button"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"intopic-toc":{"selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4, .markdown-section h5, .markdown-section h6","mode":"nested","maxDepth":6,"isCollapsed":true,"isScrollspyActive":true,"visible":true,"label":"In this article"},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"hide-published-with":{},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"back-to-top-button":{},"copy-code-button":{},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"バンタンゲームアカデミー 田中正吾 特別授業 【2年生向け】","language":"ja","gitbook":"*","description":"詳細説明"},"file":{"path":"03-getting-shibainu-api.md","mtime":"2022-06-22T12:47:15.595Z","type":"markdown"},"gitbook":{"version":"3.7.3","time":"2022-06-22T14:53:48.834Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

@@ -75,7 +75,7 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="05-api-tour.html" />
+    <link rel="next" href="05-try-various-datas.html" />
     
     
     <link rel="prev" href="03-getting-shibainu-api.html" />
@@ -172,7 +172,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.6" data-path="05-api-tour.html">
+        <li class="chapter " data-level="1.6" data-path="05-try-various-datas.html">
+            
+                <a href="05-try-various-datas.html">
+            
+                    
+                    いろいろなデータにつないでみよう
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="05-api-tour.html">
             
                 <a href="05-api-tour.html">
             
@@ -185,7 +198,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.7" data-path="06-api-tips.html">
+        <li class="chapter " data-level="1.8" data-path="06-api-tips.html">
             
                 <a href="06-api-tips.html">
             
@@ -198,7 +211,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.8" data-path="07-extra-discussion.html">
+        <li class="chapter " data-level="1.9" data-path="07-extra-discussion.html">
             
                 <a href="07-extra-discussion.html">
             
@@ -258,6 +271,8 @@
                                 
                                 <h1 id="api-から柴犬画像を表示"><a name="api-から柴犬画像を表示" class="plugin-anchor" href="#api-から柴犬画像を表示"><i class="fa fa-link" aria-hidden="true"></i></a>API から柴犬画像を表示</h1>
 <h2 id="この章ですすめること"><a name="この章ですすめること" class="plugin-anchor" href="#この章ですすめること"><i class="fa fa-link" aria-hidden="true"></i></a>この章ですすめること</h2>
+<p><img src="https://i.gyazo.com/19445804d0012399e8bed0743b77896a.jpg" alt="image"></p>
+<p>柴犬画像 API にはつながったので、いよいよ 3D に呼び出して表示をしてみます。</p>
 <h2 id="plane-を一つ作成して配置"><a name="plane-を一つ作成して配置" class="plugin-anchor" href="#plane-を一つ作成して配置"><i class="fa fa-link" aria-hidden="true"></i></a>Plane を一つ作成して配置</h2>
 <p>柴犬画像を 1 つ貼り付ける Plane を配置します。</p>
 <p><img src="https://i.gyazo.com/de138c24e588168bd682d4512ee02100.png" alt="image"></p>
@@ -367,14 +382,68 @@
 <p><img src="https://i.gyazo.com/173623ae97cb26c0f3f21bb8b58cbb16.jpg" alt="image"></p>
 <p>上手く反映できていれば、このように 1 番目の柴犬画像が Plane にテクスチャとして貼り付けられます！</p>
 <h2 id="加わったスクリプトの解説"><a name="加わったスクリプトの解説" class="plugin-anchor" href="#加わったスクリプトの解説"><i class="fa fa-link" aria-hidden="true"></i></a>加わったスクリプトの解説</h2>
-<p>TODO : 加わったスクリプトの解説</p>
-<h2 id="plane-を-2-枚増やしてみる"><a name="plane-を-2-枚増やしてみる" class="plugin-anchor" href="#plane-を-2-枚増やしてみる"><i class="fa fa-link" aria-hidden="true"></i></a>Plane を 2 枚増やしてみる</h2>
-<p>TODO : Plane を 2 枚増やしてみる</p>
+<p>加わった部分の解説です。</p>
+<pre><code class="lang-csharp"><span class="hljs-comment">// 画像を反映</span>
+StartCoroutine(GetImageToTexture(<span class="hljs-string">&quot;Plane1&quot;</span>, shibaData.urls[<span class="hljs-number">0</span>]));
+</code></pre>
+<p>まず、柴犬画像 URL を <code>GetImageToTexture</code> という関数に渡して、画像 URL から画像を読み込んで Plane にテクスチャとして貼り付けることをしています。</p>
+<pre><code class="lang-csharp"><span class="hljs-comment">// 画像 URL から画像を読み込んで Plane にテクスチャとして貼り付ける</span>
+<span class="hljs-function">IEnumerator <span class="hljs-title">GetImageToTexture</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> objName, <span class="hljs-built_in">string</span> loadURL</span>)</span>
+{
+    UnityWebRequest www = UnityWebRequestTexture.GetTexture(loadURL);
+
+    <span class="hljs-comment">//画像を取得できるまで待つ</span>
+    <span class="hljs-keyword">yield</span> <span class="hljs-keyword">return</span> www.SendWebRequest();
+
+    <span class="hljs-keyword">if</span> (www.isNetworkError || www.isHttpError)
+    {
+        Debug.Log(www.error);
+    }
+    <span class="hljs-keyword">else</span>
+    {
+        <span class="hljs-comment">// 取得した画像のテクスチャをRawImageのテクスチャに張り付ける</span>
+        Texture texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+        GameObject.Find(objName).GetComponent&lt;MeshRenderer&gt;().material.SetTexture(<span class="hljs-string">&quot;_MainTex&quot;</span>, texture);
+    }
+}
+</code></pre>
+<p>実際に動いている <code>GetImageToTexture</code> です。<code>DownloadHandlerTexture</code> でダウンロードしたデータをテクスチャとして扱って、MeshRenderer にテクスチャを貼り付けています。</p>
+<h2 id="3-匹の柴犬に増やしてみる"><a name="3-匹の柴犬に増やしてみる" class="plugin-anchor" href="#3-匹の柴犬に増やしてみる"><i class="fa fa-link" aria-hidden="true"></i></a>3 匹の柴犬に増やしてみる</h2>
+<p><img src="https://i.gyazo.com/977a12c8bf3bb7c99481f82e77ea3fee.png" alt="image"></p>
+<p>まず、Plane1 を選択してコピーして 2 回ペーストします。</p>
+<p><img src="https://i.gyazo.com/daba106872f73b82f87eb0d5b49dae61.png" alt="image"></p>
+<p>Plane2, Plane3 にリネームします。</p>
+<p><img src="https://i.gyazo.com/89d27adbc5ba6a7ced435a6dea982468.png" alt="image"></p>
+<p>Plane2 の Transform をこのようにします。 Position X を 1 にします。</p>
+<p><img src="https://i.gyazo.com/769ef57fdc8f2cb7ead3fdff96735223.png" alt="image"></p>
+<p>Plane3 の Transform をこのようにします。 Position X を 7 にします。</p>
+<p><img src="https://i.gyazo.com/7d9d04b70c6ce54133e766caa6464638.png" alt="image"></p>
+<p>このように配置されました。</p>
+<p>ShibainuAPILoader を以下のように変更します。</p>
+<pre><code class="lang-csharp"><span class="hljs-comment">// 3 つの柴犬画像 URL をリストアップ</span>
+Debug.LogFormat(<span class="hljs-string">&quot;1: {0}&quot;</span>, shibaData.urls[<span class="hljs-number">0</span>]);
+Debug.LogFormat(<span class="hljs-string">&quot;2: {0}&quot;</span>, shibaData.urls[<span class="hljs-number">1</span>]);
+Debug.LogFormat(<span class="hljs-string">&quot;3: {0}&quot;</span>, shibaData.urls[<span class="hljs-number">2</span>]);
+
+<span class="hljs-comment">// 画像を反映</span>
+StartCoroutine(GetImageToTexture(<span class="hljs-string">&quot;Plane1&quot;</span>, shibaData.urls[<span class="hljs-number">0</span>]));
+StartCoroutine(GetImageToTexture(<span class="hljs-string">&quot;Plane2&quot;</span>, shibaData.urls[<span class="hljs-number">1</span>]));  <span class="hljs-comment">// 加えた</span>
+StartCoroutine(GetImageToTexture(<span class="hljs-string">&quot;Plane3&quot;</span>, shibaData.urls[<span class="hljs-number">2</span>]));  <span class="hljs-comment">// 加えた</span>
+</code></pre>
+<p>設定できたら Play してみましょう！</p>
+<p><img src="https://i.gyazo.com/19445804d0012399e8bed0743b77896a.jpg" alt="image"></p>
+<p>うまく設定できていれば、このように 3 柴犬表示されているはずです！</p>
+<h2 id="hololens2-による柴犬表示デモ"><a name="hololens2-による柴犬表示デモ" class="plugin-anchor" href="#hololens2-による柴犬表示デモ"><i class="fa fa-link" aria-hidden="true"></i></a>HoloLens2 による柴犬表示デモ</h2>
+<p><img src="https://i.gyazo.com/059f208b6e4765bbaea4dd52d181ea1e.jpg" alt="image"></p>
+<p>このプログラムを HoloLens 2 にちょっと調整してビルドしたデモをお見せします。</p>
+<p><img src="https://i.gyazo.com/6cc2628dac21f2e36e0505c107daa34f.jpg" alt="image"></p>
+<p>柴犬に囲まれるはず。</p>
+<p>このように、Oculus Quest や HoloLens 2 のようなデバイスでも API を活かすことができます。</p>
 <h2 id="質疑応答"><a name="質疑応答" class="plugin-anchor" href="#質疑応答"><i class="fa fa-link" aria-hidden="true"></i></a>質疑応答</h2>
 <p><img src="https://i.gyazo.com/aba8ccd625e7320883851b71ebd0caf2.png" alt="image"></p>
 <p>ここまでで質問があればどうぞ！</p>
 <h2 id="次にすすみましょう"><a name="次にすすみましょう" class="plugin-anchor" href="#次にすすみましょう"><i class="fa fa-link" aria-hidden="true"></i></a>次にすすみましょう</h2>
-<p>左のナビゲーションから「API を旅してみよう」にすすみましょう。</p>
+<p>左のナビゲーションから「いろいろなデータにつないでみよう」にすすみましょう。</p>
 
                                 
                                 </section>
@@ -407,7 +476,7 @@
                 </a>
                 
                 
-                <a href="05-api-tour.html" class="navigation navigation-next " aria-label="Next page: API を旅してみよう">
+                <a href="05-try-various-datas.html" class="navigation navigation-next " aria-label="Next page: いろいろなデータにつないでみよう">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -418,7 +487,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"API から柴犬画像を表示","level":"1.5","depth":1,"next":{"title":"API を旅してみよう","level":"1.6","depth":1,"path":"05-api-tour.md","ref":"05-api-tour.md","articles":[]},"previous":{"title":"柴犬画像 API につなぐ","level":"1.4","depth":1,"path":"03-getting-shibainu-api.md","ref":"03-getting-shibainu-api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["anchors","hide-published-with","copy-code-button","intopic-toc","back-to-top-button"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"intopic-toc":{"selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4, .markdown-section h5, .markdown-section h6","mode":"nested","maxDepth":6,"isCollapsed":true,"isScrollspyActive":true,"visible":true,"label":"In this article"},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"hide-published-with":{},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"back-to-top-button":{},"copy-code-button":{},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"バンタンゲームアカデミー 田中正吾 特別授業 【2年生向け】","language":"ja","gitbook":"*","description":"詳細説明"},"file":{"path":"04-shibainu-image-tile.md","mtime":"2022-06-22T07:38:46.702Z","type":"markdown"},"gitbook":{"version":"3.7.3","time":"2022-06-22T09:40:05.543Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"API から柴犬画像を表示","level":"1.5","depth":1,"next":{"title":"いろいろなデータにつないでみよう","level":"1.6","depth":1,"path":"05-try-various-datas.md","ref":"05-try-various-datas.md","articles":[]},"previous":{"title":"柴犬画像 API につなぐ","level":"1.4","depth":1,"path":"03-getting-shibainu-api.md","ref":"03-getting-shibainu-api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["anchors","hide-published-with","copy-code-button","intopic-toc","back-to-top-button"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"intopic-toc":{"selector":".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4, .markdown-section h5, .markdown-section h6","mode":"nested","maxDepth":6,"isCollapsed":true,"isScrollspyActive":true,"visible":true,"label":"In this article"},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"hide-published-with":{},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"back-to-top-button":{},"copy-code-button":{},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"バンタンゲームアカデミー 田中正吾 特別授業 【2年生向け】","language":"ja","gitbook":"*","description":"詳細説明"},"file":{"path":"04-shibainu-image-tile.md","mtime":"2022-06-22T14:52:34.822Z","type":"markdown"},"gitbook":{"version":"3.7.3","time":"2022-06-22T14:53:48.834Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

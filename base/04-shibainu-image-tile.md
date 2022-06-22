@@ -2,6 +2,10 @@
 
 ## この章ですすめること
 
+![image](https://i.gyazo.com/19445804d0012399e8bed0743b77896a.jpg)
+
+柴犬画像 API にはつながったので、いよいよ 3D に呼び出して表示をしてみます。
+
 ## Plane を一つ作成して配置
 
 柴犬画像を 1 つ貼り付ける Plane を配置します。
@@ -140,11 +144,92 @@ public class ShibainuAPILoader : MonoBehaviour
 
 ## 加わったスクリプトの解説
 
-TODO : 加わったスクリプトの解説
+加わった部分の解説です。
 
-## Plane を 2 枚増やしてみる
+```csharp
+// 画像を反映
+StartCoroutine(GetImageToTexture("Plane1", shibaData.urls[0]));
+```
 
-TODO : Plane を 2 枚増やしてみる
+まず、柴犬画像 URL を `GetImageToTexture` という関数に渡して、画像 URL から画像を読み込んで Plane にテクスチャとして貼り付けることをしています。
+
+```csharp
+// 画像 URL から画像を読み込んで Plane にテクスチャとして貼り付ける
+IEnumerator GetImageToTexture(string objName, string loadURL)
+{
+    UnityWebRequest www = UnityWebRequestTexture.GetTexture(loadURL);
+
+    //画像を取得できるまで待つ
+    yield return www.SendWebRequest();
+
+    if (www.isNetworkError || www.isHttpError)
+    {
+        Debug.Log(www.error);
+    }
+    else
+    {
+        // 取得した画像のテクスチャをRawImageのテクスチャに張り付ける
+        Texture texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+        GameObject.Find(objName).GetComponent<MeshRenderer>().material.SetTexture("_MainTex", texture);
+    }
+}
+```
+
+実際に動いている `GetImageToTexture` です。`DownloadHandlerTexture` でダウンロードしたデータをテクスチャとして扱って、MeshRenderer にテクスチャを貼り付けています。
+
+## 3 匹の柴犬に増やしてみる
+
+![image](https://i.gyazo.com/977a12c8bf3bb7c99481f82e77ea3fee.png)
+
+まず、Plane1 を選択してコピーして 2 回ペーストします。
+
+![image](https://i.gyazo.com/daba106872f73b82f87eb0d5b49dae61.png)
+
+Plane2, Plane3 にリネームします。
+
+![image](https://i.gyazo.com/89d27adbc5ba6a7ced435a6dea982468.png)
+
+Plane2 の Transform をこのようにします。 Position X を 1 にします。
+
+![image](https://i.gyazo.com/769ef57fdc8f2cb7ead3fdff96735223.png)
+
+Plane3 の Transform をこのようにします。 Position X を 7 にします。
+
+![image](https://i.gyazo.com/7d9d04b70c6ce54133e766caa6464638.png)
+
+このように配置されました。
+
+ShibainuAPILoader を以下のように変更します。
+
+```csharp
+// 3 つの柴犬画像 URL をリストアップ
+Debug.LogFormat("1: {0}", shibaData.urls[0]);
+Debug.LogFormat("2: {0}", shibaData.urls[1]);
+Debug.LogFormat("3: {0}", shibaData.urls[2]);
+
+// 画像を反映
+StartCoroutine(GetImageToTexture("Plane1", shibaData.urls[0]));
+StartCoroutine(GetImageToTexture("Plane2", shibaData.urls[1]));  // 加えた
+StartCoroutine(GetImageToTexture("Plane3", shibaData.urls[2]));  // 加えた
+```
+
+設定できたら Play してみましょう！
+
+![image](https://i.gyazo.com/19445804d0012399e8bed0743b77896a.jpg)
+
+うまく設定できていれば、このように 3 柴犬表示されているはずです！
+
+## HoloLens2 による柴犬表示デモ
+
+![image](https://i.gyazo.com/059f208b6e4765bbaea4dd52d181ea1e.jpg)
+
+このプログラムを HoloLens 2 にちょっと調整してビルドしたデモをお見せします。
+
+![image](https://i.gyazo.com/6cc2628dac21f2e36e0505c107daa34f.jpg)
+
+柴犬に囲まれるはず。
+
+このように、Oculus Quest や HoloLens 2 のようなデバイスでも API を活かすことができます。
 
 ## 質疑応答
 
@@ -154,4 +239,4 @@ TODO : Plane を 2 枚増やしてみる
 
 ## 次にすすみましょう
 
-左のナビゲーションから「API を旅してみよう」にすすみましょう。
+左のナビゲーションから「いろいろなデータにつないでみよう」にすすみましょう。

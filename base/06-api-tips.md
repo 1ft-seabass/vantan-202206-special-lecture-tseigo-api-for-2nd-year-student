@@ -12,6 +12,18 @@ https://www.postman.com/
 
 ![image](https://i.gyazo.com/1ae2334c8c9b4e6f6b26539fb665284d.png)
 
+HTTP リクエストを色々試すなら Postman はおススメです。このような UI で色々試すことができます。
+
+## Visua Studio Code 拡張機能 REST Client
+
+![image](https://i.gyazo.com/333620f49b9478d49688443ce2640393.png)
+
+Visua Studio Code を使ってる方なら、拡張機能 REST Client も扱いやすいです。
+
+参考資料
+- VS Code上でHTTPリクエストを送信し、VS Code上でレスポンスを確認できる「REST Client」拡張の紹介 - Qiita
+  - https://qiita.com/toshi0607/items/c4440d3fbfa72eac840c
+
 ## Node-RED
 
 https://nodered.jp/
@@ -28,7 +40,7 @@ https://www.enebular.com/ja/
 
 ![image](https://i.gyazo.com/212ec86944d9389dc0864539749ba676.jpg)
 
-今回も教材の一部で使っていました。Node-RED を外部サーバー配置できたり、実行できる環境を用意する仕組みが簡単に作れ巣ので
+今回も教材の一部で使っていました。Node-RED を外部サーバー配置できたり、実行できる環境を用意する仕組みが簡単に作れます。
 
 ## 上級編 : 各社クラウドサービス
 

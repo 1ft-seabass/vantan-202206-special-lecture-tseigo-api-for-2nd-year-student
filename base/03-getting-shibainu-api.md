@@ -1,5 +1,13 @@
 # 柴犬画像 API につなぐ
 
+## この章ですすめること
+
+![image](https://i.gyazo.com/728ab1bc727950222d256e5db6e4d080.png)
+
+柴犬画像 API につないで、取得した画像 URL をブラウザのアドレスバーにペーストして、アクセスして画像取得を確認します。
+
+![image](https://i.gyazo.com/7ec52a53d8ae79b3906d6fa26d8e991e.jpg)
+
 ## 開発環境
 
 - Unity は 2019.4 台
@@ -184,7 +192,89 @@ public class ShibainuAPILoader : MonoBehaviour
 
 ## ShibainuAPILoader プログラムの解説
 
-TODO : ShibainuAPILoader プログラムの解説
+```csharp
+// JSON データ化するクラス
+[Serializable]
+public class ShibaData
+{
+    public List<string> urls;
+}
+```
+
+まず、受け取った JSON データ化するクラスです。 C# で使いやすい構造データに変換するテンプレートの役目です。
+
+これは、受け取るデータ合わせて書き換えるので、いろいろな API を取得するたびに調整する部分です。
+
+```csharp
+void Start()
+{
+    StartCoroutine(GetShibainu());
+}
+```
+
+まず、起動時に柴犬画像 API に取得に向かいます。
+
+```csharp
+    IEnumerator GetShibainu()
+    {
+        // 3 つの柴犬画像を取得するURL
+        UnityWebRequest request = UnityWebRequest.Get("http://shibe.online/api/shibes?count=3&urls=true&httpsUrls=true");
+
+        yield return request.SendWebRequest();
+```
+
+まず、`UnityWebRequest` クラスで GET リクエストする API の URL　を設定して、実行します。
+
+```csharp
+        if (request.isNetworkError || request.isHttpError)
+        {
+            Debug.Log(request.error);
+        }
+        else
+        {
+            // 結果をテキストとして表示します
+            Debug.Log(request.downloadHandler.text);
+
+            // まずテキストデータとして取得
+            string json = (string)request.downloadHandler.text;
+
+            Debug.LogFormat("json: {0}", json);
+```
+
+`if (request.isNetworkError || request.isHttpError)` で HTTP まわりの取得エラーを検知してます。問題なければ else で取得成功という流れです。
+
+結果を待ってテキストデータとして取得します。
+
+```csharp
+            // ルートが配列なので JSON 化する前に urls オブジェクトで包んで調整する
+            json = "{\"urls\":" + json + "}";
+```
+
+ここがちょっとややこしいんのですが、柴犬 API で返す値のルートが配列なので ArgumentException: JSON must represent an object type. というエラーが出てしまい困りました。FromJson の制約の一つとのことです。
+
+ルートが配列なので JSON 化する前に urls オブジェクトで包んで調整しています。
+
+```csharp
+            // そのうえで ShibaData クラスで JSON データ化
+            ShibaData shibaData = JsonUtility.FromJson<ShibaData>(json);
+```
+
+包んでしまえば、事前に決めた `ShibaData` をもとに `JsonUtility.FromJson` で C# で使いやすい構造データ化します。
+
+```csharp
+            // 3 つの柴犬画像 URL をリストアップ
+            Debug.LogFormat("1: {0}", shibaData.urls[0]);
+            Debug.LogFormat("2: {0}", shibaData.urls[1]);
+            Debug.LogFormat("3: {0}", shibaData.urls[2]);
+        }
+
+
+    }
+
+```
+
+あとは、`shibaData.urls` は List 型になるので3つ取得したデータを一つ一つ表示しています。
+
 
 ## 質疑応答
 
