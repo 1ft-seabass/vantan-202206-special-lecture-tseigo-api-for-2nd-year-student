@@ -312,6 +312,16 @@ ppm 2000 までは白文字で表示されます。
 
 2000 を越えると赤文字で表示されます。
 
+## 時間があれば HoloLens 2 デモします
+
+![image](https://i.gyazo.com/059f208b6e4765bbaea4dd52d181ea1e.jpg)
+
+このプログラムを HoloLens 2 にちょっと調整してビルドしたデモをお見せします。
+
+![image](https://i.gyazo.com/9c9b80ee991d89ed580b35ca2df7ee2b.jpg)
+
+こんなものが動くはず。
+
 ## obniz という IoT デバイスに取り付けたテープ LED の色が変化する
 
 ![image](https://i.gyazo.com/6db132d5a6c0638c9898c37a10786487.jpg)
