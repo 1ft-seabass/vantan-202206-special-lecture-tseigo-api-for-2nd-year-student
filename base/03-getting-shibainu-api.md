@@ -2,6 +2,10 @@
 
 ## この章ですすめること
 
+![image](https://i.gyazo.com/62b5ac09e6196fa692f59e0bb2880258.png)
+
+このような流れです。
+
 ![image](https://i.gyazo.com/728ab1bc727950222d256e5db6e4d080.png)
 
 柴犬画像 API につないで、取得した画像 URL をブラウザのアドレスバーにペーストして、アクセスして画像取得を確認します。

@@ -96,8 +96,12 @@ POST リクエスト例
 
 ### JSON データの送信や受け取ったデータの JSON 解析は JsonUtility
 
+![image](https://i.gyazo.com/3a574ce27b737832c3f94c0f9ea9dc1b.png)
+
 JSON データの送信や受け取ったデータの JSON 解析は、Unity でビルドインされている JsonUtility が便利です。
 
+- JSON 形式にシリアライズ - Unity マニュアル
+  - https://docs.unity3d.com/ja/2018.4/Manual/JSONSerialization.html
 - JsonUtility-FromJson - Unity スクリプトリファレンス
   - https://docs.unity3d.com/ja/2018.4/ScriptReference/JsonUtility.FromJson.html
 - JsonUtility-ToJson - Unity スクリプトリファレンス
@@ -108,6 +112,8 @@ JSON データの送信や受け取ったデータの JSON 解析は、Unity で
 ![image](https://i.gyazo.com/d0f4ebb4d8d3c8988055d12191971876.png)
 
 次の章では、ブラウザで表示して確認もできる GET リクエストの API でサッと試してみます。
+
+![image](https://i.gyazo.com/62b5ac09e6196fa692f59e0bb2880258.png)
 
 柴犬画像をランダムで表示する API に Unity からつなぎます。
 

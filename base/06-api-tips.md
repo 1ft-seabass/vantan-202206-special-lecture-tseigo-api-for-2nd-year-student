@@ -48,6 +48,27 @@ https://www.enebular.com/ja/
 
  AWS・GCP・Azure・IBM Cloud など各社クラウドサービスを利用すると、APIによって様々な機能を使うことができ、みなさんの Unity の仕組みをパワフルにサポートしてくれるでしょう。
 
+## そのほかいろいろ
+
+時間が許せば
+
+- Microsoft Azure
+  - 12 か月間無料のサービス、いつでも無料の 25 個以上のサービス、200 米国ドルのクレジット
+    - https://azure.microsoft.com/ja-jp/free/
+- HTTPBin
+  - https://httpbin.org/
+- Airtable
+  - https://airtable.com/
+- Twitter API よくなった
+  - Twitter API v2 の Essential Access ができた手順メモ – 1ft-seabass.jp.MEMO
+    - https://www.1ft-seabass.jp/memo/2022/02/16/twitter-essential-access/
+- API 連携サービス
+  - integromat(Make)
+    - integromatがサポート終了。Makeへのアップデートと注意点について - Qiita
+      - https://qiita.com/cal_mgc/items/51fe79c26a8604f9828a
+
+などなど
+
 ## 質疑応答
 
 ![image](https://i.gyazo.com/aba8ccd625e7320883851b71ebd0caf2.png)
