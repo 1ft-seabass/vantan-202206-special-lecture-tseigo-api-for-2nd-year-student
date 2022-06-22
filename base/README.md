@@ -15,6 +15,12 @@
 
 屋号ワンフットシーバスにてフリーランスエンジニアで活動。Microsoft MVP・IBM Champion。WEBフロントエンドをベースにしながらも、情報とインターフェースが合わさるアプローチという視点でIoTやMixed Realityといった技術も取り入れながら活動しています。ウォンバットが好き。
 
+## 事前アンケートありがとうございました
+
+![image](https://i.gyazo.com/c90d937664278ceb6ddd791d3836e5ce.png)
+
+アンケートデータ見ていただきながら、今日の進め方を伝えます。
+
 ## 授業スタート！
 
 ![image](https://i.gyazo.com/9e0eefffd6cf76fc45e70b1ac8a7f838.png)
